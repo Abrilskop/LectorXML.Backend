@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.API", "LectorXML\LectorXML.Backend.API.csproj", "{A382F493-D2C3-4BEB-BA32-C3104AD4DFAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Application", "LectorXML.Backend.Application\LectorXML.Backend.Application.csproj", "{D38ED876-C5CA-4C7C-8531-ED2BC743DB63}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4} = {6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Domain", "LectorXML.Backend.Domain\LectorXML.Backend.Domain.csproj", "{96864707-AC1B-4CF5-AED6-832968F1E4CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Infraestructure", "LectorXML.Backend.Infraestructure\LectorXML.Backend.Infraestructure.csproj", "{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Shared", "LectorXML.Backend.Shared\LectorXML.Backend.Shared.csproj", "{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A382F493-D2C3-4BEB-BA32-C3104AD4DFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A382F493-D2C3-4BEB-BA32-C3104AD4DFAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A382F493-D2C3-4BEB-BA32-C3104AD4DFAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A382F493-D2C3-4BEB-BA32-C3104AD4DFAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D38ED876-C5CA-4C7C-8531-ED2BC743DB63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D38ED876-C5CA-4C7C-8531-ED2BC743DB63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D38ED876-C5CA-4C7C-8531-ED2BC743DB63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D38ED876-C5CA-4C7C-8531-ED2BC743DB63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3AD17EBC-FE6E-4ED7-8C44-20BD5546CD6F}
+	EndGlobalSection
+EndGlobal
