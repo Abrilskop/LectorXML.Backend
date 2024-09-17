@@ -1,4 +1,5 @@
-﻿using LectorXML.Backend.Infraestructure.Comprobante.DTO;
+﻿using LectorXML.Backend.Domain.Comprobante.Domain;
+using LectorXML.Backend.Domain.Comprobante.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace LectorXML.Backend.Domain.Comprobantes.Interfaces
 {
     public interface IComprobanteRepository
     {
-        Task<List<FileResponse>> listado();
+        Task<Factura> registrar(Factura factura);
     }
 }

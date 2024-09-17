@@ -1,5 +1,7 @@
 ﻿using LectorXML.Backend.Application.Comun;
-using LectorXML.Backend.Infraestructure.Comprobante.DTO;
+using LectorXML.Backend.Domain.Comprobante.Domain;
+using LectorXML.Backend.Domain.Comprobante.DTO;
+using LectorXML.Backend.Domain.Comprobantes.Interfaces;
 using LectorXML.Backend.Shared;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -9,14 +11,18 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace LectorXML.Backend.Application.Comprobantes
 {
     public class ComprobanteApp:BaseApp<ComprobanteApp> {
-    
-        public ComprobanteApp() 
+
+        private IComprobanteRepository _comprobanteRepository;
+
+
+        public ComprobanteApp(IComprobanteRepository comprobanteRepository) 
         { 
-            
+            this._comprobanteRepository = comprobanteRepository;
         }
         
         public async Task <string> DevolverCadena()
@@ -24,13 +30,6 @@ namespace LectorXML.Backend.Application.Comprobantes
             string cadena = "Operación exitosa";
             return cadena;
         }
-
-        ////public FileResponse ParciarDocumentoAObjeto(IFormFile file)
-        ////{
-        ////    FileResponse response = new FileResponse();
-        ////    response.Name = file.FileName;
-        ////    return response;
-        ////}
 
         public async Task <StatusResponse<FileResponse>> ParciarDocumentoAObjeto(IFormFile file)
         {
@@ -87,10 +86,10 @@ namespace LectorXML.Backend.Application.Comprobantes
                 // fileResponse.Size = sizeFormatted;
 
                 // Leer el contenido del archivo XML
-                using (var reader = new StreamReader(file.OpenReadStream()))
-                {
-                    fileResponse.XmlContent = reader.ReadToEnd(); // Leer el contenido completo del archivo
-                }
+                //using (var reader = new StreamReader(file.OpenReadStream()))
+                //{
+                //    fileResponse.XmlContent = reader.ReadToEnd(); // Leer el contenido completo del archivo
+                //}
 
                 // Asignar la extensión del archivo
                 fileResponse.Extension = fileExtension;
@@ -256,6 +255,137 @@ namespace LectorXML.Backend.Application.Comprobantes
                 //respuesta.Errores = TODO crear un diccionario y enviar los errores por este atributo
                 return respuesta;
             }
+        }
+
+        public async Task<StatusResponse<Factura>> LeerXml(IFormFile file)
+        { 
+            StatusResponse<Factura> respuesta = new StatusResponse<Factura>();
+            respuesta.Codigo = 200;
+            respuesta.Titulo = "Operación exitosa.";
+
+            Factura factura = new Factura();
+            XmlSerializer serializer = new XmlSerializer(typeof(InvoiceType));
+            try
+
+            {
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    string s = Convert.ToBase64String(fileBytes);
+                }
+                InvoiceType resultXML = null;
+                using (TextReader reader = new StreamReader(file.OpenReadStream()))
+                    resultXML = (InvoiceType)serializer.Deserialize(reader);
+
+                if (resultXML.UBLVersionID == null)
+                {
+
+                }
+                else if (resultXML.UBLVersionID.Value == "2.0")
+                {
+
+                }
+                else if (resultXML.UBLVersionID.Value != "2.1")
+                {
+
+                }
+                int? lengthEmi = resultXML.AccountingSupplierParty.Party.PartyTaxScheme?.Length;
+                int? lengthEmiSecundario = resultXML.AccountingSupplierParty.Party.PartyIdentification?.Length;
+                int? lengthCli = resultXML.AccountingCustomerParty.Party.PartyTaxScheme?.Length;
+                int? lengthCliSecundario = resultXML.AccountingCustomerParty.Party.PartyIdentification?.Length;
+                int? lengthTotTe = resultXML.Note?.Length;
+                string rucEmisor = "";
+                string rucCliente = "";
+
+                if (lengthEmi != null)
+                {
+                    if (resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID != null
+                        && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value))
+                        rucEmisor = resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                }
+                if (lengthEmiSecundario != null)
+                {
+                    if (resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID != null
+                        && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value))
+                        rucEmisor = resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value;
+                }
+                if (lengthCli != null)
+                {
+                    if (resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID != null
+                        && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value))
+                        rucCliente = resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                }
+                if (lengthCliSecundario != null)
+                {
+                    if (resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID != null
+                        && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value))
+                        rucCliente = resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value;
+                }
+                factura.Cliente_NroIdentificacion = rucCliente;
+                string Detraccion = string.Empty;
+                string Proveedor_RazonSocial = string.Empty;
+                string Cliente_RazonSocial = string.Empty;
+                try
+                {
+                    if (lengthEmi != null)
+                    {
+                        if (resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName.Value))
+                            Proveedor_RazonSocial = resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName.Value;
+                    }
+                    if (lengthEmiSecundario != null)
+                    {
+                        if (resultXML.AccountingSupplierParty.Party.PartyLegalEntity[0].RegistrationName != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyLegalEntity[0].RegistrationName.Value))
+                            Proveedor_RazonSocial = resultXML.AccountingSupplierParty.Party.PartyLegalEntity[0].RegistrationName.Value;
+                    }
+                    if (lengthCli != null)
+                    {
+                        if (resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].RegistrationName != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].RegistrationName.Value))
+                            Cliente_RazonSocial = resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].RegistrationName.Value;
+                    }
+                    if (lengthCliSecundario != null)
+                    {
+                        if (resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName.Value))
+                            Cliente_RazonSocial = resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName.Value;
+                    }
+
+                    Detraccion = resultXML.PaymentTerms[0].PaymentMeansID[0].Value;
+
+                }
+                catch (Exception ex)
+                {
+                    respuesta.Codigo = 500;
+                    respuesta.Titulo = "Ocurrio un error al leer los datos del proveedor y del cliente.";
+                    respuesta.Detalle = ex.Message;
+                    return respuesta;
+
+                }
+
+                factura.Detraccion = Detraccion;
+                factura.Proveedor_NroIdentificacion = rucEmisor;
+                factura.Cliente_RazonSocial = Cliente_RazonSocial;
+                factura.Proveedor_RazonSocial = Proveedor_RazonSocial;
+                factura.FechaEmision = resultXML.IssueDate.Value;
+                respuesta.Data = factura;
+
+                StatusResponse<Factura> regsitrar = await this.ProcesoComplejo(() => this._comprobanteRepository.registrar(factura),"");
+
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 500;
+                respuesta.Titulo = "Ocurrio un error.";
+                respuesta.Detalle = ex.Message;
+
+            }
+
+            return respuesta;
+
+
         }
 
     }

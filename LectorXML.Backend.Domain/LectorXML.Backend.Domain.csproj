@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LectorXML.Backend.Infraestructure\LectorXML.Backend.Infraestructure.csproj" />
-  </ItemGroup>
-
 </Project>

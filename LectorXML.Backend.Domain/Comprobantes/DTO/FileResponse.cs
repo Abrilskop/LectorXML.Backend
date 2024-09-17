@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace LectorXML.Backend.Domain.Comprobante.DTO
 {
-    internal class Class1
+    public class FileResponse
     {
+        public string Name {  get; set; }
+        public decimal Size { get; set; }
+        public string Extension { get; set; }
+
     }
 }

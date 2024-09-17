@@ -12,9 +12,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Domain", "LectorXML.Backend.Domain\LectorXML.Backend.Domain.csproj", "{96864707-AC1B-4CF5-AED6-832968F1E4CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Infraestructure", "LectorXML.Backend.Infraestructure\LectorXML.Backend.Infraestructure.csproj", "{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LectorXML.Backend.Shared", "LectorXML.Backend.Shared\LectorXML.Backend.Shared.csproj", "{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectorXML.Backend.Infraestructure", "LectorXML.Backend.Infraestructure\LectorXML.Backend.Infraestructure.csproj", "{CC979C50-5F0D-4E12-9421-711091C4B210}"
+	ProjectSection(ProjectDependencies) = postProject
+		{96864707-AC1B-4CF5-AED6-832968F1E4CE} = {96864707-AC1B-4CF5-AED6-832968F1E4CE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,14 +37,14 @@ Global
 		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96864707-AC1B-4CF5-AED6-832968F1E4CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29DDD5E8-A5FB-4297-A7A7-AF3640298D78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6345DFC4-550C-40BD-AF15-8FD8CB8EADB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC979C50-5F0D-4E12-9421-711091C4B210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC979C50-5F0D-4E12-9421-711091C4B210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC979C50-5F0D-4E12-9421-711091C4B210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC979C50-5F0D-4E12-9421-711091C4B210}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

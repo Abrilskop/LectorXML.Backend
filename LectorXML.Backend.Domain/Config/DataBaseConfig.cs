@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LectorXML.Backend.Infraestructure.Comprobante.Domain
+namespace LectorXML.Backend.Domain.Config
 {
     public record class DatabaseConfig(string SqlServerConnection);
 }

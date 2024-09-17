@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LectorXML.Backend.Infraestructure\LectorXML.Backend.Infraestructure.csproj" />
+    <ProjectReference Include="..\LectorXML.Backend.Domain\LectorXML.Backend.Domain.csproj" />
     <ProjectReference Include="..\LectorXML.Backend.Shared\LectorXML.Backend.Shared.csproj" />
   </ItemGroup>
 

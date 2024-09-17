@@ -1,4 +1,7 @@
-using LectorXML.Backend.Infraestructure.Comprobante.Domain;
+using LectorXML.Backend.Application.Comprobantes;
+using LectorXML.Backend.Domain.Comprobantes.Interfaces;
+using LectorXML.Backend.Domain.Config;
+using LectorXML.Backend.Infraestructure.Comprobantes;
 using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +18,14 @@ DatabaseConfig databaseConfig = configuration.GetSection("Database").Get<Databas
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddTransient<ComprobanteApp>();
+builder.Services.AddTransient<IComprobanteRepository, ComprobanteRepository>();
+
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
