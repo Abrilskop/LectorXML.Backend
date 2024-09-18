@@ -392,6 +392,15 @@ namespace LectorXML.Backend.Application.Comprobantes
             return await this.ProcesoComplejo(() => this._comprobanteRepository.Obtener(), "");
         }
 
+        public async Task<StatusResponse<Factura?>> Registrar()
+        {
+            return await this.ProcesoComplejo(() => this._comprobanteRepository.Registrar(), "");
+        }
+
+        public async Task<StatusResponse<Factura?>> Actualizar()
+        {
+            return await this.ProcesoComplejo(() => this._comprobanteRepository.Registrar(), "");
+        }
 
     }
 }

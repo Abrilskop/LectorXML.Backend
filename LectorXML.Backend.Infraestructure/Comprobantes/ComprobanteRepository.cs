@@ -23,26 +23,37 @@ namespace LectorXML.Backend.Infraestructure.Comprobantes
 
         public async Task<Factura?> Obtener()
         {
-            Factura? respuesta = new Factura();
-            //SQL que ejecutara Dapper, aquí puedes jugar con los orders que quieras.
-            string sql = @"SELECT [Id]
-                              ,[Codigo]
-                              ,[Monto]
-                              ,[CodigoDetraccion]
-                              ,[Creado]
-                              ,[CreadoPor]
-                          FROM [Comprobante] 
-                          ORDER BY Id";
-
-            
+            Factura? respuesta = null;
 
             using (IDbConnection conn = new SqlConnection(this._databaseConfig.SqlServerConnection))
             {
-
-                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>(sql);
+                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>("sp_ObtenerComprobante", commandType: CommandType.StoredProcedure);
             }
 
             return respuesta;
-        } 
+        }
+
+        public async Task<Factura?> Registrar()
+        {
+            Factura? respuesta = null;
+
+            using (IDbConnection conn = new SqlConnection(this._databaseConfig.SqlServerConnection))
+            {
+                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>("sp_RegistrarComprobante", commandType: CommandType.StoredProcedure);
+            }
+
+            return respuesta;
+        }
+        public async Task<Factura?> Actualizar()
+        {
+            Factura? respuesta = null;
+
+            using (IDbConnection conn = new SqlConnection(this._databaseConfig.SqlServerConnection))
+            {
+                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>("sp_ActualizarComprobante", commandType: CommandType.StoredProcedure);
+            }
+
+            return respuesta;
+        }
     }
 }

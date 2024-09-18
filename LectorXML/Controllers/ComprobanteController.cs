@@ -103,6 +103,20 @@ namespace LectorXML.Backend.API.Controllers
             StatusResponse<Factura> cadena = await this._comprobanteApp.Obtener();
             return StatusCode(cadena.Codigo, cadena);
         }
+
+        [HttpPost("Registrar")]
+        public async Task<IActionResult> Registrar()
+        {
+            StatusResponse<Factura> cadena = await this._comprobanteApp.Registrar();
+            return StatusCode(cadena.Codigo, cadena);
+        }
+
+        [HttpPost("Actualizar")]
+        public async Task<IActionResult> Actualizar()
+        {
+            StatusResponse<Factura> cadena = await this._comprobanteApp.Actualizar();
+            return StatusCode(cadena.Codigo, cadena);
+        }
     }
 }
 

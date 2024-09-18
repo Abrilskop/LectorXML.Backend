@@ -11,5 +11,10 @@ namespace LectorXML.Backend.Domain.Comprobantes.Interfaces
     public interface IComprobanteRepository
     {
         Task<Factura?> Obtener();
+
+        Task<Factura?> Registrar();
+
+        Task<Factura?> Actualizar();
     }
+
 }
