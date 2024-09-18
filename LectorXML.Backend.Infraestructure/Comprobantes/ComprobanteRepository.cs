@@ -1,5 +1,7 @@
-﻿using LectorXML.Backend.Domain.Comprobante.Domain;
+﻿using Dapper;
+using LectorXML.Backend.Domain.Comprobante.Domain;
 using LectorXML.Backend.Domain.Comprobantes.Interfaces;
+using LectorXML.Backend.Domain.Config;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,9 +14,16 @@ namespace LectorXML.Backend.Infraestructure.Comprobantes
 {
     public class ComprobanteRepository : IComprobanteRepository
     {
-        private static string _connectionString = "server=.;database=LectorXml; User ID=sa;Password=root;Encrypt=False;MultipleActiveResultSets=True";
-        public async Task<Factura> registrar(Factura factura)
+        private readonly DatabaseConfig _databaseConfig;
+
+        public ComprobanteRepository(DatabaseConfig databaseConfig)
         {
+            _databaseConfig = databaseConfig;
+        }
+
+        public async Task<Factura?> Obtener()
+        {
+            Factura? respuesta = new Factura();
             //SQL que ejecutara Dapper, aquí puedes jugar con los orders que quieras.
             string sql = @"SELECT [Id]
                               ,[Codigo]
@@ -25,23 +34,15 @@ namespace LectorXML.Backend.Infraestructure.Comprobantes
                           FROM [Comprobante] 
                           ORDER BY Id";
 
-            //Iniciar la conexión con la base de datos
-            using (IDbConnection con = new SqlConnection(_connectionString)
+            
+
+            using (IDbConnection conn = new SqlConnection(this._databaseConfig.SqlServerConnection))
             {
-                var Consulta = factura
+
+                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>(sql);
             }
 
-
-            //Ejecutar la consulta SQL y almacenar las líneas en nuestro modelo. 
-
-            //Dapper devuelve un IEnumerable para trabajar más cómodos lo convertimos a listas. 
-            return marks.ToList();
-        }
-
-
-
-    }
-        
-
+            return respuesta;
+        } 
     }
 }

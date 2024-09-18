@@ -8,19 +8,23 @@ using Microsoft.Extensions.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddJsonFile($"appsettings.Local.json", optional: true);
+builder.Configuration.AddEnvironmentVariables();
+builder.Configuration.AddCommandLine(args);
 // Add services to the container.
 
 
 builder.Services.AddControllers();
 var provider = builder.Services.BuildServiceProvider();
 var configuration = provider.GetRequiredService<IConfiguration>();
+
+
 DatabaseConfig databaseConfig = configuration.GetSection("Database").Get<DatabaseConfig>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddSingleton<DatabaseConfig>(databaseConfig);
 builder.Services.AddTransient<ComprobanteApp>();
 builder.Services.AddTransient<IComprobanteRepository, ComprobanteRepository>();
 

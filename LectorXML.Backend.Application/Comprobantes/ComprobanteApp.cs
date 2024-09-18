@@ -365,14 +365,14 @@ namespace LectorXML.Backend.Application.Comprobantes
 
                 }
 
-                factura.Detraccion = Detraccion;
+                factura.CodigoDetraccion = Detraccion;
                 factura.Proveedor_NroIdentificacion = rucEmisor;
                 factura.Cliente_RazonSocial = Cliente_RazonSocial;
                 factura.Proveedor_RazonSocial = Proveedor_RazonSocial;
                 factura.FechaEmision = resultXML.IssueDate.Value;
                 respuesta.Data = factura;
 
-                StatusResponse<Factura> regsitrar = await this.ProcesoComplejo(() => this._comprobanteRepository.registrar(factura),"");
+                StatusResponse<Factura> regsitrar = await this.ProcesoComplejo(() => this._comprobanteRepository.Obtener(),"");
 
             }
             catch (Exception ex)
@@ -387,6 +387,11 @@ namespace LectorXML.Backend.Application.Comprobantes
 
 
         }
+
+        public async Task<StatusResponse<Factura?>> Obtener() {
+            return await this.ProcesoComplejo(() => this._comprobanteRepository.Obtener(), "");
+        }
+
 
     }
 }
