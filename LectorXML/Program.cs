@@ -4,8 +4,10 @@ using LectorXML.Backend.Domain.Config;
 using LectorXML.Backend.Infraestructure.Comprobantes;
 using Microsoft.Extensions.Configuration;
 
-var builder = WebApplication.CreateBuilder(args);
 
+
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -23,9 +25,6 @@ builder.Services.AddTransient<ComprobanteApp>();
 builder.Services.AddTransient<IComprobanteRepository, ComprobanteRepository>();
 
 var app = builder.Build();
-
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
