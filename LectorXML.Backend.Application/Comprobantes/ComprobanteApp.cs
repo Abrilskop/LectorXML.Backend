@@ -548,7 +548,7 @@ namespace LectorXML.Backend.Application.Comprobantes
                     respuesta.Detalle = regsitrar.Detalle;
                     return respuesta;
                 }
-                respuesta.Data = factura;
+                respuesta.Data = factura; // aqui
 
             }
             catch (Exception ex)
