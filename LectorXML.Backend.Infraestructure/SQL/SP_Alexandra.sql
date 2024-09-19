@@ -1,82 +1,133 @@
-CREATE OR ALTER PROCEDURE sp_ObtenerComprobante
-AS
-BEGIN
-    SELECT [Id], [Codigo], [Monto], [CodigoDetraccion], [Creado], [CreadoPor]
-    FROM [Comprobante]
-    ORDER BY Id;
-END
-GO
 
-CREATE OR ALTER PROCEDURE sp_RegistrarComprobante
-    @Codigo VARCHAR(50),
-    @Monto DECIMAL(18, 2),
-    @CodigoDetraccion VARCHAR(4),
-    @Creado VARCHAR(50),
-    @CreadoPor VARCHAR(50)
-AS
-BEGIN
-    INSERT INTO Comprobante (Codigo, Monto, CodigoDetraccion, Creado, CreadoPor)
-    VALUES (@Codigo, @Monto, @CodigoDetraccion, @Creado, @CreadoPor);
-END
-GO
 -- 
 CREATE OR ALTER PROCEDURE sp_RegistrarComprobante
-    @Id UNIQUEIDENTIFIER NULL,
-    @DocumentoPago_Id UNIQUEIDENTIFIER NULL,
-    @Nro NVARCHAR(255) NULL,
-    @FechaEmision DATETIME NULL,
-    @Moneda_Id NVARCHAR(255) NULL,
-    @Proveedor_NroIdentificacion NVARCHAR(255) NULL,
-    @Proveedor_RazonSocial NVARCHAR(255) NULL,
-    @Cliente_NroIdentificacion NVARCHAR(255) NULL,
-    @Cliente_RazonSocial NVARCHAR(255) NULL,
-    @SubTotal DECIMAL(18, 2) NULL,
-    @Anticipo DECIMAL(18, 2) NULL,
-    @Descuento DECIMAL(18, 2) NULL,
-    @OperacionGravada DECIMAL(18, 2) NULL,
-    @OperacionExonerada DECIMAL(18, 2) NULL,
-    @ISC DECIMAL(18, 2) NULL,
-    @IVA DECIMAL(18, 2) NULL,
-    @OtroCargo DECIMAL(18, 2) NULL,
-    @OtroTributo DECIMAL(18, 2) NULL,
-    @Total DECIMAL(18, 2) NULL,
-    @OperacionGratuita DECIMAL(18, 2) NULL,
-    @TotalTexto NVARCHAR(255) NULL,
-    @TipoDocumento NVARCHAR(255) NULL,
-    @OrdenCompra_Nro NVARCHAR(255) NULL,
-    @NotaRecepcion_Codigo NVARCHAR(255) NULL,
-    @Codigo_Detraccion NVARCHAR(255) NULL,
-    @FechaConsulta DATETIME NULL,
-    @DiaPago INT NULL,
-    @FechaVencimientoPago DATETIME NULL,
-    @PorcentajeDetraccion DECIMAL(18, 2)  NULL,
-    @MontoDetraccion DECIMAL(18, 2) NULL,
-    @DescripcionDetraccion NVARCHAR(255) NULL,
-    @EstadoSunat NVARCHAR(255) NULL,
-    @TipoDocumentoNeoGrid NVARCHAR(255) NULL,
-    @MontoOtrosCargos DECIMAL(18, 2) NULL,
-    @CorrelativoPortal INT NULL,
-    @OtroCargoAplicable DECIMAL(18, 2) NULL,
-    @Creado DATETIME NULL
+(
+
+    @Id	int = null,
+	@DocumentoPago_Id	int = null,
+	@Nro	nvarchar(510) = null,
+	@FechaEmision	datetime = null,
+	@Moneda_Id	nvarchar(510) = null,
+	@Proveedor_NroIdentificacion	nvarchar(510) = null,
+	@Proveedor_RazonSocial	nvarchar(510) = null,
+	@Cliente_NroIdentificacion	nvarchar(510) = null,
+	@Cliente_RazonSocial	nvarchar(510) = null,
+	@SubTotal	decimal(9,2) = null,
+	@Anticipo	decimal(9,2) = null,
+	@Descuento	decimal(9,2) = null,
+	@OperacionGravada	decimal(9,2) = null,
+	@OperacionExonerada	decimal(9,2) = null,
+	@ISC	decimal(9,2) = null,
+	@IVA	decimal(9,2) = null,
+	@OtroCargo	decimal(9,2) = null,
+	@OtroTributo	decimal(9,2) = null,
+	@Total	decimal(9,2) = null,
+	@OperacionGratuita	decimal(9,2) = null,
+	@TotalTexto	nvarchar(510) = null,
+	@TipoDocumento	nvarchar(510) = null,
+	@OrdenCompra_Nro	nvarchar(510) = null,
+	@NotaRecepcion_Codigo	nvarchar(510) = null,
+	@Codigo_Detraccion	nvarchar(510) = null,
+	@FechaConsulta	datetime = null,
+	@DiaPago	int = null,
+	@FechaVencimientoPago	datetime = null,
+	@PorcentajeDetraccion	decimal(9,2) = null,
+	@MontoDetraccion	decimal(9,2) = null,
+	@DescripcionDetraccion	nvarchar(510) = null,
+	@EstadoSunat	nvarchar(510) = null,
+	@TipoDocumentoNeoGrid	nvarchar(510) = null,
+	@MontoOtrosCargos	decimal(9,2) = null,
+	@CorrelativoPortal	int = null,
+	@OtroCargoAplicable	decimal(9,2) = null,
+	@Creado	datetime = null
+)
 AS
 BEGIN
-    INSERT INTO Comprobante(Id, DocumentoPago_Id, Nro, FechaEmision, Moneda_Id, 
-        Proveedor_NroIdentificacion, Proveedor_RazonSocial, Cliente_NroIdentificacion, 
-        Cliente_RazonSocial, SubTotal, Anticipo, Descuento, OperacionGravada, 
-        OperacionExonerada, ISC, IVA, OtroCargo, OtroTributo, Total, 
-        OperacionGratuita, TotalTexto, TipoDocumento, OrdenCompra_Nro, 
-        NotaRecepcion_Codigo, Codigo_Detraccion, FechaConsulta, DiaPago, 
-        FechaVencimientoPago, PorcentajeDetraccion, MontoDetraccion, 
-        DescripcionDetraccion, EstadoSunat, TipoDocumentoNeoGrid, 
-        MontoOtrosCargos, CorrelativoPortal, OtroCargoAplicable, Creado)
-    VALUES (@Id, @DocumentoPago_Id, @Nro, @FechaEmision, @Moneda_Id, 
-        @Proveedor_NroIdentificacion, @Proveedor_RazonSocial, @Cliente_NroIdentificacion, 
-        @Cliente_RazonSocial, @SubTotal, @Anticipo, @Descuento, @OperacionGravada, 
-        @OperacionExonerada, @ISC, @IVA, @OtroCargo, @OtroTributo, @Total, 
-        @OperacionGratuita, @TotalTexto, @TipoDocumento, @OrdenCompra_Nro, 
-        @NotaRecepcion_Codigo, @Codigo_Detraccion, @FechaConsulta, @DiaPago, 
-        @FechaVencimientoPago, @PorcentajeDetraccion, @MontoDetraccion, 
-        @DescripcionDetraccion, @EstadoSunat, @TipoDocumentoNeoGrid, 
-        @MontoOtrosCargos, @CorrelativoPortal, @OtroCargoAplicable, @Creado);
+	SET @Id = ISNULL(
+		(SELECT
+				MAX(Id)
+			FROM
+				Comprobante
+		),
+    0) + 1
+
+    INSERT INTO Comprobante(
+	Id,
+	DocumentoPago_Id,
+	Nro,
+	FechaEmision,
+	Moneda_Id,
+	Proveedor_NroIdentificacion,
+	Proveedor_RazonSocial,
+	Cliente_NroIdentificacion,
+	Cliente_RazonSocial,
+	SubTotal,
+	Anticipo,
+	Descuento,
+	OperacionGravada,
+	OperacionExonerada,
+	ISC,
+	IVA,
+	OtroCargo,
+	OtroTributo,
+	Total,
+	OperacionGratuita,
+	TotalTexto,
+	TipoDocumento,
+	OrdenCompra_Nro,
+	NotaRecepcion_Codigo,
+	Codigo_Detraccion,
+	FechaConsulta,
+	DiaPago,
+	FechaVencimientoPago,
+	PorcentajeDetraccion,
+	MontoDetraccion,
+	DescripcionDetraccion,
+	EstadoSunat,
+	TipoDocumentoNeoGrid,
+	MontoOtrosCargos,
+	CorrelativoPortal,
+	OtroCargoAplicable,
+	Creado
+	)
+    VALUES (
+	@Id,
+	@DocumentoPago_Id,
+	@Nro,
+	@FechaEmision,
+	@Moneda_Id,
+	@Proveedor_NroIdentificacion,
+	@Proveedor_RazonSocial,
+	@Cliente_NroIdentificacion,
+	@Cliente_RazonSocial,
+	@SubTotal,
+	@Anticipo,
+	@Descuento,
+	@OperacionGravada,
+	@OperacionExonerada,
+	@ISC,
+	@IVA,
+	@OtroCargo,
+	@OtroTributo,
+	@Total,
+	@OperacionGratuita,
+	@TotalTexto,
+	@TipoDocumento,
+	@OrdenCompra_Nro,
+	@NotaRecepcion_Codigo,
+	@Codigo_Detraccion,
+	@FechaConsulta,
+	@DiaPago,
+	@FechaVencimientoPago,
+	@PorcentajeDetraccion,
+	@MontoDetraccion,
+	@DescripcionDetraccion,
+	@EstadoSunat,
+	@TipoDocumentoNeoGrid,
+	@MontoOtrosCargos,
+	@CorrelativoPortal,
+	@OtroCargoAplicable,
+	@Creado	
+	);
 END
 GO

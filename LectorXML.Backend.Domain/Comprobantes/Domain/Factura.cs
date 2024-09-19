@@ -9,8 +9,8 @@ namespace LectorXML.Backend.Domain.Comprobante.Domain
 {
     public class Factura
     {
-        public Guid? Id { get; set; }
-        public Guid? DocumentoPago_Id { get; set; }
+        public int? Id { get; set; }
+        public int? DocumentoPago_Id { get; set; }
         public string Nro { get; set; }
         public DateTime FechaEmision { get; set; }
         public string Moneda_Id { get; set; }
