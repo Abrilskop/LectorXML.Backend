@@ -298,9 +298,6 @@ namespace LectorXML.Backend.Application.Comprobantes
                 var rucEmisor = string.Empty;
                 var rucCliente = string.Empty;
 
-
-
-
                 try
                 {
                     factura = new Factura();
@@ -544,6 +541,13 @@ namespace LectorXML.Backend.Application.Comprobantes
 
                 StatusSimpleResponse regsitrar = await this.ProcesoSimple(() => this._comprobanteRepository.Registrar(factura),"");
 
+                if (!regsitrar.Satisfactorio)
+                {
+                    respuesta.Codigo = 500;
+                    respuesta.Titulo = "Ocurrio un error.";
+                    respuesta.Detalle = regsitrar.Detalle;
+                    return respuesta;
+                }
                 respuesta.Data = factura;
 
             }
