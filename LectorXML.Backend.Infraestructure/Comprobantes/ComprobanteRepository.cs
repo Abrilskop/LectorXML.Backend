@@ -33,13 +33,21 @@ namespace LectorXML.Backend.Infraestructure.Comprobantes
             return respuesta;
         }
 
-        public async Task<Factura?> Registrar()
+        public async Task<Factura?> Registrar(Factura factura)
         {
             Factura? respuesta = null;
 
             using (IDbConnection conn = new SqlConnection(this._databaseConfig.SqlServerConnection))
             {
-                respuesta = await conn.QueryFirstOrDefaultAsync<Factura>("sp_RegistrarComprobante", commandType: CommandType.StoredProcedure);
+               await conn.QueryAsync("sp_RegistrarComprobante",
+                   new {
+                        factura.Nro ,
+                        factura.MontoOtrosCargos,
+                        factura.Codigo_Detraccion ,
+                        Creado = DateTime.Now,
+                        CreadoPor = "Alexandra"
+                   }
+                   , commandType: CommandType.StoredProcedure);
             }
 
             return respuesta;

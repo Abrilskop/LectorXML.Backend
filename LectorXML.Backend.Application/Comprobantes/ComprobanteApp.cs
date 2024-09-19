@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LectorXML.Backend.Application.Comprobantes
 {
@@ -290,51 +291,215 @@ namespace LectorXML.Backend.Application.Comprobantes
                 {
 
                 }
-                int? lengthEmi = resultXML.AccountingSupplierParty.Party.PartyTaxScheme?.Length;
-                int? lengthEmiSecundario = resultXML.AccountingSupplierParty.Party.PartyIdentification?.Length;
-                int? lengthCli = resultXML.AccountingCustomerParty.Party.PartyTaxScheme?.Length;
-                int? lengthCliSecundario = resultXML.AccountingCustomerParty.Party.PartyIdentification?.Length;
-                int? lengthTotTe = resultXML.Note?.Length;
-                string rucEmisor = "";
-                string rucCliente = "";
 
-                if (lengthEmi != null)
+                Decimal porcentajeIVA = 0;
+                // GENERAR LA CLASE FACTURA VALIDAR LOS CAMPOS
+                var monto = string.Empty;
+                var rucEmisor = string.Empty;
+                var rucCliente = string.Empty;
+
+
+
+
+                try
                 {
-                    if (resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID != null
-                        && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value))
-                        rucEmisor = resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                    factura = new Factura();
+                    factura.Nro = resultXML.ID.Value;
+                    factura.TipoDocumento = resultXML.InvoiceTypeCode.Value;
+                    int? lengthEmi = resultXML.AccountingSupplierParty.Party.PartyTaxScheme?.Length;
+                    int? lengthEmi2 = resultXML.AccountingSupplierParty.Party.PartyIdentification?.Length;
+                    int? lengthCli = resultXML.AccountingCustomerParty.Party.PartyTaxScheme?.Length;
+                    int? lengthCli2 = resultXML.AccountingCustomerParty.Party.PartyIdentification?.Length;
+                    int? lengthTotTe = resultXML.Note?.Length;
+
+                    if (lengthEmi != null)
+                    {
+                        if (resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value))
+                            rucEmisor = resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                    }
+                    if (lengthEmi2 != null)
+                    {
+                        if (resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value))
+                            rucEmisor = resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value;
+                    }
+                    if (lengthCli != null)
+                    {
+                        if (resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value))
+                            rucCliente = resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                    }
+                    if (lengthCli2 != null)
+                    {
+                        if (resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID != null
+                            && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value))
+                            rucCliente = resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value;
+                    }
+                    for (int a = 0; a < lengthTotTe; a++)
+                    {
+                        if (resultXML.Note[a].languageLocaleID != null)
+                        {
+                            var varLocal = resultXML.Note[a].languageLocaleID.ToString();
+                            if (varLocal == "1000")
+                            {
+                                factura.TotalTexto = resultXML.Note[a].Value;
+                            }
+                        }
+                    }
                 }
-                if (lengthEmiSecundario != null)
+                catch (System.Exception ex)
                 {
-                    if (resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID != null
-                        && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value))
-                        rucEmisor = resultXML.AccountingSupplierParty.Party.PartyIdentification[0].ID.Value;
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = "El archivo ingresado no es un documento válido de SUNAT";
+                    respuesta.Titulo = ex.Message;
+                    return respuesta;
+
                 }
-                if (lengthCli != null)
+
+                try
                 {
-                    if (resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID != null
-                        && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value))
-                        rucCliente = resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].CompanyID.Value;
+                    factura.FechaVencimientoPago = resultXML.IssueDate.Value;
+                    DateTime fechaLimiteObligatorioParaCuotas = new DateTime(2021, 12, 1);
+                    factura.FechaEmision = resultXML.IssueDate.Value;//Necesario para excluir
+
+                    if (factura.FechaEmision > fechaLimiteObligatorioParaCuotas)
+                    {
+                        List<string> DetalleCuota = new List<string>();
+
+                        int? lengthPaymentTerms = resultXML.PaymentTerms?.Length;
+                        if (lengthPaymentTerms != null)
+                        {
+                            for (int i = 0; i < lengthPaymentTerms; i++)
+                            {
+
+                                if (resultXML.PaymentTerms[i].ID != null)
+                                {
+
+                                    if (resultXML.PaymentTerms[i].ID != null || resultXML.PaymentTerms[i].ID.Value.ToString() == "Detraccion")
+                                    {
+                                        int? lengthPaymentMeansID = resultXML.PaymentTerms[i].PaymentMeansID?.Length;
+
+                                        if (lengthPaymentMeansID != null)
+                                        {
+
+                                            if (resultXML.PaymentTerms[i].PaymentMeansID[0] != null)
+                                                factura.Codigo_Detraccion = resultXML.PaymentTerms[i].PaymentMeansID[0].Value;
+
+                                            if (resultXML.PaymentTerms[i].PaymentMeansID[0] == null)
+                                                factura.Codigo_Detraccion = "";
+
+                                        }
+
+                                        if (resultXML.PaymentTerms[i].PaymentPercent != null)
+                                            factura.PorcentajeDetraccion = resultXML.PaymentTerms[i].PaymentPercent.Value;
+
+                                        if (resultXML.PaymentTerms[i].PaymentPercent == null)
+                                            factura.PorcentajeDetraccion = 0;
+
+
+                                        if (resultXML.PaymentTerms[i].Amount != null)
+                                            factura.MontoDetraccion = resultXML.PaymentTerms[i].Amount.Value;
+
+                                        if (resultXML.PaymentTerms[i].Amount == null)
+                                            factura.MontoDetraccion = 0;
+
+                                    }
+
+                                    if (resultXML.PaymentTerms[i].PaymentMeansID != null)
+                                    {
+
+                                        if (resultXML.PaymentTerms[i].PaymentMeansID[0].Value != null)
+                                        {
+
+                                            if (resultXML.PaymentTerms[i].PaymentMeansID[0].Value.ToLower().Contains("cuota"))
+                                            {
+                                                string Cuota = resultXML.PaymentTerms[i].PaymentMeansID[0].Value;
+                                                int Largo = Cuota.Length;
+                                                string NroCuota = Cuota.Substring(5, Largo - 5).Replace("0", "");
+
+                                                string montoCuota = resultXML.PaymentTerms[i].Amount?.Value.ToString();
+                                                string descripcionCuota = resultXML.PaymentTerms[i].PaymentMeansID[0]?.Value;
+                                                DateTime? fechaCuota = resultXML.PaymentTerms[i].PaymentDueDate?.Value;
+
+                                                if (NroCuota == "1")
+                                                {
+                                                    factura.FechaVencimientoPago = fechaCuota;
+                                                }
+
+
+                                                DetalleCuota.Add((montoCuota == null ? "No se encontro el monto" : montoCuota) +
+                                                                  " - " + (descripcionCuota == null ? "No se encontro la descripcion" : descripcionCuota) +
+                                                                  " - " + (fechaCuota == null ? "No se encontro la fecha" : fechaCuota.ToString()));
+
+                                            }
+
+                                        }
+
+
+                                    }
+
+                                }
+
+
+                            }
+
+                            if (DetalleCuota.Count > 0)
+                                factura.CuotasDetalle = DetalleCuota;
+                        }
+
+                    }
+
+                    if (factura.Codigo_Detraccion == null)
+                    {
+                        int? lentResultXML = resultXML.Note?.Length;
+
+                        if (lentResultXML != null)
+                        {
+                            for (int i = 0; i < resultXML.Note.Length; i++)
+                            {
+                                if (resultXML.Note[i].Value != null)
+                                {
+                                    if (resultXML.Note[i].Value.Contains("DETRACCION"))
+                                    {
+                                        factura.Codigo_Detraccion = resultXML.Note[i].Value;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+
+
                 }
-                if (lengthCliSecundario != null)
+                catch (System.Exception ex)
                 {
-                    if (resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID != null
-                        && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value))
-                        rucCliente = resultXML.AccountingCustomerParty.Party.PartyIdentification[0].ID.Value;
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = $"La factura tiene una fecha de emisión {factura.FechaEmision.ToString("dd/MM/yyyy")} y debería tener la sección de términos de pago el cual no tiene. Por lo cual el archivo ingresado no es un documento válido de SUNAT";
+                    respuesta.Titulo = ex.Message;
+                    return respuesta;
                 }
-                factura.Cliente_NroIdentificacion = rucCliente;
-                string Detraccion = string.Empty;
+
+
+
+
                 string Proveedor_RazonSocial = string.Empty;
                 string Cliente_RazonSocial = string.Empty;
                 try
                 {
+                    int? lengthEmi = resultXML.AccountingSupplierParty.Party.PartyTaxScheme?.Length;
+                    int? lengthEmi2 = resultXML.AccountingSupplierParty.Party.PartyLegalEntity?.Length;
+                    int? lengthCli = resultXML.AccountingCustomerParty.Party.PartyTaxScheme?.Length;
+                    int? lengthCli2 = resultXML.AccountingCustomerParty.Party.PartyLegalEntity?.Length;
+
                     if (lengthEmi != null)
                     {
                         if (resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName != null
                             && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName.Value))
                             Proveedor_RazonSocial = resultXML.AccountingSupplierParty.Party.PartyTaxScheme[0].RegistrationName.Value;
                     }
-                    if (lengthEmiSecundario != null)
+                    if (lengthEmi2 != null)
                     {
                         if (resultXML.AccountingSupplierParty.Party.PartyLegalEntity[0].RegistrationName != null
                             && !string.IsNullOrEmpty(resultXML.AccountingSupplierParty.Party.PartyLegalEntity[0].RegistrationName.Value))
@@ -346,33 +511,40 @@ namespace LectorXML.Backend.Application.Comprobantes
                             && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].RegistrationName.Value))
                             Cliente_RazonSocial = resultXML.AccountingCustomerParty.Party.PartyTaxScheme[0].RegistrationName.Value;
                     }
-                    if (lengthCliSecundario != null)
+                    if (lengthCli2 != null)
                     {
                         if (resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName != null
                             && !string.IsNullOrEmpty(resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName.Value))
                             Cliente_RazonSocial = resultXML.AccountingCustomerParty.Party.PartyLegalEntity[0].RegistrationName.Value;
                     }
-
-                    Detraccion = resultXML.PaymentTerms[0].PaymentMeansID[0].Value;
-
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
-                    respuesta.Codigo = 500;
-                    respuesta.Titulo = "Ocurrio un error al leer los datos del proveedor y del cliente.";
-                    respuesta.Detalle = ex.Message;
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = "El archivo ingresado no es un documento válido de SUNAT";
+                    respuesta.Titulo = ex.Message;
                     return respuesta;
 
                 }
 
-                factura.CodigoDetraccion = Detraccion;
                 factura.Proveedor_NroIdentificacion = rucEmisor;
                 factura.Cliente_RazonSocial = Cliente_RazonSocial;
                 factura.Proveedor_RazonSocial = Proveedor_RazonSocial;
                 factura.FechaEmision = resultXML.IssueDate.Value;
-                respuesta.Data = factura;
 
-                StatusResponse<Factura> regsitrar = await this.ProcesoComplejo(() => this._comprobanteRepository.Obtener(),"");
+
+
+                factura.Cliente_NroIdentificacion = rucCliente;
+                factura.Moneda_Id = resultXML.DocumentCurrencyCode.Value;
+                if (resultXML.LegalMonetaryTotal.ChargeTotalAmount != null)
+                    factura.OtroCargo = resultXML.LegalMonetaryTotal.ChargeTotalAmount.Value;
+
+
+
+
+                StatusSimpleResponse regsitrar = await this.ProcesoSimple(() => this._comprobanteRepository.Registrar(factura),"");
+
+                respuesta.Data = factura;
 
             }
             catch (Exception ex)
@@ -392,15 +564,7 @@ namespace LectorXML.Backend.Application.Comprobantes
             return await this.ProcesoComplejo(() => this._comprobanteRepository.Obtener(), "");
         }
 
-        public async Task<StatusResponse<Factura?>> Registrar()
-        {
-            return await this.ProcesoComplejo(() => this._comprobanteRepository.Registrar(), "");
-        }
 
-        public async Task<StatusResponse<Factura?>> Actualizar()
-        {
-            return await this.ProcesoComplejo(() => this._comprobanteRepository.Registrar(), "");
-        }
 
     }
 }

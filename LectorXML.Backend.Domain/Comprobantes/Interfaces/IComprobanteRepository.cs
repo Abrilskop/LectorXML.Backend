@@ -12,7 +12,7 @@ namespace LectorXML.Backend.Domain.Comprobantes.Interfaces
     {
         Task<Factura?> Obtener();
 
-        Task<Factura?> Registrar();
+        Task<Factura?> Registrar(Factura factura);
 
         Task<Factura?> Actualizar();
     }
