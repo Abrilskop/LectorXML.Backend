@@ -34,5 +34,6 @@ CREATE TABLE DocumentoPago (
     TipoDocumentoNeoGrid NVARCHAR(255) NULL,
     MontoOtrosCargos DECIMAL(18, 2) NOT NULL,
     CorrelativoPortal INT NULL,
-    OtroCargoAplicable DECIMAL(18, 2) NOT NULL
+    OtroCargoAplicable DECIMAL(18, 2) NOT NULL,
+    Creado DATETIME NULL,
 );
