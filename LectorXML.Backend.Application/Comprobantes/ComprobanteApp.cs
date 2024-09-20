@@ -266,6 +266,7 @@ namespace LectorXML.Backend.Application.Comprobantes
 
             Factura factura = new Factura();
             XmlSerializer serializer = new XmlSerializer(typeof(InvoiceType));
+
             try
 
             {
@@ -275,21 +276,29 @@ namespace LectorXML.Backend.Application.Comprobantes
                     var fileBytes = ms.ToArray();
                     string s = Convert.ToBase64String(fileBytes);
                 }
+
                 InvoiceType resultXML = null;
                 using (TextReader reader = new StreamReader(file.OpenReadStream()))
-                    resultXML = (InvoiceType)serializer.Deserialize(reader);
+                resultXML = (InvoiceType)serializer.Deserialize(reader);
 
+                // VALIDAR EL FORMATO DEL UBL
                 if (resultXML.UBLVersionID == null)
                 {
-
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = "error con la version de UBL";
+                    return respuesta;
                 }
                 else if (resultXML.UBLVersionID.Value == "2.0")
                 {
-
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = "error con la version de UBL";
+                    return respuesta;
                 }
                 else if (resultXML.UBLVersionID.Value != "2.1")
                 {
-
+                    respuesta.Satisfactorio = false;
+                    respuesta.Detalle = "error con la version de UBL";
+                    return respuesta;
                 }
 
                 Decimal porcentajeIVA = 0;
